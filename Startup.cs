@@ -33,8 +33,12 @@ namespace AspNetCoreIdentityExamples
 
             #region 有关Identity的配置
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
+            services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration["Data:SportStoreIdentity:ConnectionString"]));
             services.AddIdentity<AppUser, IdentityRole>(opts => {
+                opts.User.RequireUniqueEmail = true;
+                opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
+
                 opts.Password.RequiredLength = 6;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;

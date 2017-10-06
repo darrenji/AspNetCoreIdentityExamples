@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using AspNetCoreIdentityExamples.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using AspNetCoreIdentityExamples.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 namespace AspNetCoreIdentityExamples
 {
@@ -30,6 +32,7 @@ namespace AspNetCoreIdentityExamples
         {
 
             #region 有关Identity的配置
+            services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration["Data:SportStoreIdentity:ConnectionString"]));
             services.AddIdentity<AppUser, IdentityRole>(opts => {
                 opts.Password.RequiredLength = 6;

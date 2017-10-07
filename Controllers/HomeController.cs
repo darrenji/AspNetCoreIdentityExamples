@@ -28,7 +28,8 @@ namespace AspNetCoreIdentityExamples.Controllers
         }
 
 
-        [Authorize(Roles = "Users")]
+        //[Authorize(Roles = "Users")]
+        [Authorize(Policy = "DCUsers")]
         public IActionResult OtherAction() => View("Index", GetData(nameof(OtherAction)));
 
         [Authorize]

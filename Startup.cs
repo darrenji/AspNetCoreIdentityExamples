@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AspNetCoreIdentityExamples.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AspNetCoreIdentityExamples
 {
@@ -34,6 +35,15 @@ namespace AspNetCoreIdentityExamples
             #region 有关Identity的配置
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
             services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
+
+            //policy
+            services.AddAuthorization(opts => {
+                opts.AddPolicy("DCUsers", policy => {
+                    policy.RequireRole("Users");
+                    policy.RequireClaim(ClaimTypes.StateOrProvince, "DC");
+                });
+            });
+
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration["Data:SportStoreIdentity:ConnectionString"]));
             services.AddIdentity<AppUser, IdentityRole>(opts => {
                 opts.User.RequireUniqueEmail = true;

@@ -59,6 +59,10 @@ namespace AspNetCoreIdentityExamples
             app.UseIdentity();
             #endregion
             app.UseMvcWithDefaultRoute();
+
+            #region 有关Identity的配置，种子数据
+            AppIdentityDbContext.CreateAdminAccount(app.ApplicationServices, Configuration).Wait();
+            #endregion
         }
     }
 }

@@ -57,6 +57,9 @@ namespace AspNetCoreIdentityExamples
             app.UseStaticFiles();
             #region 有关Identity的配置
             app.UseIdentity();
+
+            //添加Claim
+            app.UseClaimsTransformation(LocationClaimsProvider.AddClaims);
             #endregion
             app.UseMvcWithDefaultRoute();
 

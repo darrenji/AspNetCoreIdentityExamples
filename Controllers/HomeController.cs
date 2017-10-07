@@ -32,6 +32,9 @@ namespace AspNetCoreIdentityExamples.Controllers
         [Authorize(Policy = "DCUsers")]
         public IActionResult OtherAction() => View("Index", GetData(nameof(OtherAction)));
 
+        [Authorize(Policy = "NotBob")]
+        public IActionResult NotBob() => View("Index", GetData(nameof(NotBob)));
+
         [Authorize]
         public async Task<IActionResult> UserProps()
         {

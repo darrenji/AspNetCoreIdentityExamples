@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AspNetCoreIdentityExamples.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreIdentityExamples
 {
@@ -35,12 +36,17 @@ namespace AspNetCoreIdentityExamples
             #region 有关Identity的配置
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
             services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
+            services.AddTransient<IAuthorizationHandler, BlockUsersHandler>();
 
             //policy
             services.AddAuthorization(opts => {
                 opts.AddPolicy("DCUsers", policy => {
                     policy.RequireRole("Users");
                     policy.RequireClaim(ClaimTypes.StateOrProvince, "DC");
+                });
+                opts.AddPolicy("NotBob", policy => {
+                    policy.RequireAuthenticatedUser();
+                    policy.AddRequirements(new BlockUsersRequirement("bob"));
                 });
             });
 

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using AspNetCoreIdentityExamples.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http.Authentication;
+using System.Security.Claims;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -65,6 +67,52 @@ namespace AspNetCoreIdentityExamples.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult GoogleLogin(string returnUrl)
+        {
+            //转向的url,包括returnUrl
+            string redirectUrl = Url.Action("GoogleResponse", "Account", new { ReturnUrl = returnUrl});
+
+            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+
+            //把需要返回的地址交给Google登录引擎，并告知返回的地址
+            return new ChallengeResult("Google", properties);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleResponse(string returlUrl = "/")
+        {
+            ExternalLoginInfo info = await signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
+            if (result.Succeeded)
+            {
+                return Redirect(returlUrl);
+            }
+            else {
+                AppUser user = new AppUser {
+                    Email = info.Principal.FindFirst(ClaimTypes.Email).Value,
+                    UserName = info.Principal.FindFirst(ClaimTypes.Email).Value
+                };
+                IdentityResult identResult = await userManager.CreateAsync(user);
+                if (identResult.Succeeded)
+                {
+                    identResult = await userManager.AddLoginAsync(user, info);
+                    if (identResult.Succeeded)
+                    {
+                        await signInManager.SignInAsync(user, false);
+                        return Redirect(returlUrl);
+                    }
+                }
+                return AccessDenied();
+            }
         }
     }
 }

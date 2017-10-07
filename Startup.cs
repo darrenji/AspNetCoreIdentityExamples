@@ -80,6 +80,10 @@ namespace AspNetCoreIdentityExamples
             app.UseStaticFiles();
             #region 有关Identity的配置
             app.UseIdentity();
+            app.UseGoogleAuthentication(new GoogleOptions {
+                ClientId = "",
+                ClientSecret = ""
+            });
 
             //添加Claim
             app.UseClaimsTransformation(LocationClaimsProvider.AddClaims);

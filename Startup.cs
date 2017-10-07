@@ -37,6 +37,7 @@ namespace AspNetCoreIdentityExamples
             services.AddTransient<IPasswordValidator<AppUser>, CustomPasswordValidator>();
             services.AddTransient<IUserValidator<AppUser>, CustomUserValidator>();
             services.AddTransient<IAuthorizationHandler, BlockUsersHandler>();
+            services.AddTransient<IAuthorizationHandler, DocumentAuthorizationHandler>();
 
             //policy
             services.AddAuthorization(opts => {
@@ -47,6 +48,12 @@ namespace AspNetCoreIdentityExamples
                 opts.AddPolicy("NotBob", policy => {
                     policy.RequireAuthenticatedUser();
                     policy.AddRequirements(new BlockUsersRequirement("bob"));
+                });
+                opts.AddPolicy("AuthorsAndEditors", policy => {
+                    policy.AddRequirements(new DocumentAuthorizationRequirement {
+                        AllowAuthors = true,
+                        AllowEditors =true
+                    });
                 });
             });
 

@@ -8,9 +8,10 @@ using AspNetCoreIdentityExamples.Models;
 namespace AspNetCoreIdentityExamples.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    partial class AppIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171007114856_CustomPropertiesOnAppUser")]
+    partial class CustomPropertiesOnAppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431")
